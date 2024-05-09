@@ -112,12 +112,15 @@ class SchoolPassAPI {
       }
     ]);
 
-    const hash = this.hashPassword_(password);
+    /* No longer needed because of a School Pass update. Keeping
+       in case things change...
+    */
+    // const hash = this.hashPassword_(password);
 
     const userInfo = this.getAuthenticatingUser(
       connectionInfo.schoolConnection.appCode,
       username,
-      hash
+      password
     )[0];
 
     this.user = userInfo;
@@ -126,13 +129,10 @@ class SchoolPassAPI {
       this.schoolCode,
       userInfo.userType,
       userInfo.internalId,
-      hash
+      password
     );
 
-    this.schoolConnect.defaults.headers = {
-      Token: token,
-      ...this.schoolConnect.defaults.headers
-    };
+    this.schoolConnect.defaults.headers["Authorization"] = "Bearer " + token.access_token;
   }
 
   /**
@@ -158,8 +158,8 @@ class SchoolPassAPI {
    */
   authenticate_(schoolCode, userType, userId, password) {
     try {
-      const res = this.schoolConnect.post("User/Login", {
-        params: {
+      const res = this.schoolConnect.post("Auth/token", {
+        payload: {
           schoolCode,
           userType,
           userId,
@@ -167,7 +167,7 @@ class SchoolPassAPI {
         }
       });
 
-      return res.body;
+      return res;
     } catch (err) {
       throw err;
     }
