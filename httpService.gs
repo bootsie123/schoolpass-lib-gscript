@@ -85,9 +85,7 @@ class HttpService {
     let json;
 
     try {
-      
       json = JSON.parse(body);
-      
     } catch {
       json = {
         status,
