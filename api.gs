@@ -127,8 +127,8 @@ class SchoolPassAPI {
 
     const token = this.authenticate_(
       this.schoolCode,
-      userInfo.userType,
-      userInfo.internalId,
+      userInfo.user.userType,
+      userInfo.user.internalId,
       password
     );
 
@@ -163,7 +163,8 @@ class SchoolPassAPI {
           schoolCode,
           userType,
           userId,
-          password
+          password,
+          authType: "credentials"
         }
       });
 
@@ -183,10 +184,11 @@ class SchoolPassAPI {
    */
   getAuthenticatingUser(schoolCode, username, password) {
     try {
-      const res = this.schoolConnect.get("User", {
-        params: {
+      const res = this.schoolConnect.post("Auth/users", {
+        payload: {
           schoolCode,
-          login: username,
+          authType: "credentials",
+          email: username,
           password
         }
       });
